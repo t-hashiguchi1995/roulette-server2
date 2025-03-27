@@ -41,9 +41,9 @@ async function processPath(inputPath) {
 
 async function main() {
   const input = process.argv[2];
-  if (!input) {
-    console.error("使用法: node index.js <画像ファイルまたはディレクトリパス>");
-    process.exit(1);
+  if (!input || input === '--help') {
+    console.log("使用法: node index.js <画像ファイルまたはディレクトリパス>");
+    process.exit(0);
   }
   await processPath(input);
 }

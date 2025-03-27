@@ -4,6 +4,7 @@ const express = require('express');
 const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
+const archiver = require('archiver');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,19 +20,40 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// 画像アップロードと変換のエンドポイント
-app.post("/upload", upload.single("webpImage"), async (req, res) => {
-  if (!req.file) {
+// 画像アップロードと変換のエンドポイント（複数ファイル対応）
+app.post("/upload", upload.array("webpImage"), async (req, res) => {
+  if (!req.files || req.files.length === 0) {
     return res.status(400).send("ファイルがアップロードされていません。");
   }
   try {
-    const convertedBuffer = await sharp(req.file.buffer).png().toBuffer();
-    res.set("Content-Disposition", "attachment; filename=converted.png");
-    res.contentType("image/png");
-    res.send(convertedBuffer);
-  } catch (error) {
-    console.error("変換エラー:", error);
-    res.status(500).send("変換中にエラーが発生しました。");
+    res.set('Content-Type', 'application/zip');
+    res.set('Content-Disposition', 'attachment; filename=converted.zip');
+    const archive = archiver('zip');
+    archive.on('error', (err) => {
+      console.error("アーカイブエラー:", err);
+      return res.status(500).send("アーカイブ作成中にエラーが発生しました。");
+    });
+    archive.pipe(res);
+    let successfulConversions = 0;
+    for (const file of req.files) {
+      console.log("変換開始：", file.originalname);
+      try {
+        const convertedBuffer = await sharp(file.buffer).png().toBuffer();
+        const newName = path.parse(file.originalname).name + ".png";
+        archive.append(convertedBuffer, { name: newName });
+        console.log("変換成功：", newName);
+        successfulConversions++;
+      } catch (error) {
+        console.error("変換エラー:", error, "ファイル名:", file.originalname);
+      }
+    }
+    if (successfulConversions === 0) {
+      archive.append(Buffer.from("全てのファイル変換に失敗しました。"), { name: "error.txt" });
+    }
+    await archive.finalize();
+  } catch (err) {
+    console.error("エンドポイント全体のエラー:", err);
+    res.status(500).send("処理中にエラーが発生しました。");
   }
 });
 
