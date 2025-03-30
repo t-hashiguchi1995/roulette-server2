@@ -1,32 +1,22 @@
-<p align="center">
-  <img src="assets/header.svg" alt="Header">
-</p>
+<![CDATA[
+<div align="center">
+  <img src="assets/header.svg" alt="Platform Header">
+</div>
 
-# 🚀 プロジェクト概要
+# RooCode Project Platform
 
-本プロジェクトは、WebP画像をPNG形式に変換するためのシンプルなツールです。  
-Node.jsおよびSharpライブラリを用いており、コマンドラインから画像ファイルやディレクトリを指定して実行できます。
+このリポジトリは、複数のプロジェクトを集約するプラットフォームです。  
+各プロジェクトは「projects」フォルダ内に個別のサブディレクトリとして配置されています。
 
-# 🛠️ 使い方
+## プロジェクト一覧
 
-## 基本的な使い方
-```bash
-node index.js <画像ファイルまたはディレクトリパス>
-```
-例:
-```bash
-node index.js images/sample.webp
-```
+- **roulette-server**: WebP画像をPNGに変換するサービス  
+  詳細は [projects/roulette-server](projects/roulette-server) をご覧ください。
 
-## 注意事項
-- 変換元の画像はWebP形式である必要があります。
-- 変換後、元のファイルと同じディレクトリにPNGファイルが生成されます。
+## 使い方
 
-# 📦 依存関係
+各プロジェクトは独立した構成となっており、プロジェクトごとのREADMEや設定ファイルで詳細を確認してください。
 
-- [Node.js](https://nodejs.org/)
-- [Sharp](https://sharp.pixelplumbing.com/)
-
-# 📃 ライセンス
-
-本プロジェクトはMITライセンスの下で公開されています。
+---
+*このプラットフォームはCI/CDパイプラインを利用し、継続的な統合・デプロイが実現されています。*
+]]>
